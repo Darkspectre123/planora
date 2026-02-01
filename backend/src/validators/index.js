@@ -100,64 +100,164 @@ const addMemberToProjectValidator = () => {
   ];
 };
 
-const createTaskValidator = () => {
-  return [
-    body("title").notEmpty().withMessage("Title is required"),
-    body("description").optional(),
-    body("assignedTo").notEmpty().withMessage("Assigned to is required"),
-    body("status")
-      .optional()
-      .notEmpty()
-      .withMessage("Status is required")
-      .isIn(AvailableTaskStatuses),
-    body("startDate")
-      .optional({ checkFalsy: true })
-      .isISO8601()
-      .withMessage("Start date must be valid"),
+// const createTaskValidator = () => {
+//   return [
+//     body("title").notEmpty().withMessage("Title is required"),
+//     body("description").optional(),
+//     body("assignedTo").notEmpty().withMessage("Assigned to is required"),
+//     body("status")
+//       .optional()
+//       .notEmpty()
+//       .withMessage("Status is required")
+//       .isIn(AvailableTaskStatuses),
+//     body("startDate")
+//       .optional({ checkFalsy: true })
+//       .isISO8601()
+//       .withMessage("Start date must be valid"),
 
-    body("endDate")
-      .optional({ checkFalsy: true })
-      .isISO8601()
-      .withMessage("End date must be valid")
-      .custom((value, { req }) => {
-        if (req.body.startDate && new Date(value) < new Date(req.body.startDate)) {
-          throw new Error("End date must be after start date");
-        }
-        return true;
-      }),
+//     body("endDate")
+//       .optional({ checkFalsy: true })
+//       .isISO8601()
+//       .withMessage("End date must be valid")
+//       .custom((value, { req }) => {
+//         if (req.body.startDate && new Date(value) < new Date(req.body.startDate)) {
+//           throw new Error("End date must be after start date");
+//         }
+//         return true;
+//       }),
 
-    body("priority")
-      .optional({ checkFalsy: true })
-      .isIn(["low", "medium", "high"])
-      .withMessage("Priority is invalid"),
-  ];
-};
+//     body("priority")
+//       .optional({ checkFalsy: true })
+//       .isIn(["low", "medium", "high"])
+//       .withMessage("Priority is invalid"),
+//   ];
+// };
 
-const updateTaskValidator = () => {
-  return [
-    body("title").optional(),
-    body("description").optional(),
-    body("status")
-      .optional()
-      .isIn(AvailableTaskStatuses)
-      .withMessage("Status is invalid"),
-    body("assignedTo").optional(),
-    body("startDate")
-      .optional()
-      .isISO8601()
-      .withMessage("Start date must be valid"),
+const createTaskValidator = () => [
+  body("title")
+    .trim()
+    .notEmpty()
+    .withMessage("Title is required"),
 
-    body("endDate")
-      .optional({ checkFalsy: true })
-      .isISO8601()
-      .withMessage("End date must be valid"),
+  body("description").optional(),
 
-    body("priority")
-      .optional({ checkFalsy: true })
-      .isIn(["low", "medium", "high"])
-      .withMessage("Priority is invalid"),
-  ];
-};
+  body("assignedTo")
+    .optional({ nullable: true })
+    .isMongoId()
+    .withMessage("Assigned user is invalid"),
+
+  body("status")
+    .optional()
+    .isIn(AvailableTaskStatuses)
+    .withMessage("Status is invalid"),
+
+  body("startDate")
+    .optional({ checkFalsy: true })
+    .custom((value) => {
+      if (!value) return true; // skip if empty
+      if (isNaN(Date.parse(value))) {
+        throw new Error("Start date must be valid");
+      }
+      return true;
+    }),
+
+  body("endDate")
+    .optional({ checkFalsy: true })
+    .custom((value, { req }) => {
+      if (!value) return true;
+      if (isNaN(Date.parse(value))) {
+        throw new Error("End date must be valid");
+      }
+      if (req.body.startDate && new Date(value) < new Date(req.body.startDate)) {
+        throw new Error("End date must be after start date");
+      }
+      return true;
+    }),
+
+  body("priority")
+    .optional({ checkFalsy: true })
+    .customSanitizer((v) => v.toLowerCase())
+    .isIn(["low", "medium", "high"])
+    .withMessage("Priority is invalid"),
+];
+
+
+// const updateTaskValidator = () => {
+//   return [
+//     body("title").optional(),
+//     body("description").optional(),
+//     body("status")
+//       .optional()
+//       .isIn(AvailableTaskStatuses)
+//       .withMessage("Status is invalid"),
+//     body("assignedTo").optional(),
+//     body("startDate")
+//       .optional()
+//       .isISO8601()
+//       .withMessage("Start date must be valid"),
+
+//     body("endDate")
+//       .optional({ checkFalsy: true })
+//       .isISO8601()
+//       .withMessage("End date must be valid"),
+
+//     body("priority")
+//       .optional({ checkFalsy: true })
+//       .isIn(["low", "medium", "high"])
+//       .withMessage("Priority is invalid"),
+//   ];
+// };
+
+
+const updateTaskValidator = () => [
+  body("title")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Title cannot be empty"),
+
+  body("description").optional(),
+
+  body("assignedTo")
+    .optional({ nullable: true })
+    .isMongoId()
+    .withMessage("Assigned user is invalid"),
+
+  body("status")
+    .optional()
+    .isIn(AvailableTaskStatuses)
+    .withMessage("Status is invalid"),
+
+  body("startDate")
+    .optional({ checkFalsy: true })
+    .custom((value) => {
+      if (!value) return true; // skip if empty
+      if (isNaN(Date.parse(value))) {
+        throw new Error("Start date must be valid");
+      }
+      return true;
+    }),
+
+  body("endDate")
+    .optional({ checkFalsy: true })
+    .custom((value, { req }) => {
+      if (!value) return true; // skip if empty
+      if (isNaN(Date.parse(value))) {
+        throw new Error("End date must be valid");
+      }
+      if (req.body.startDate && new Date(value) < new Date(req.body.startDate)) {
+        throw new Error("End date must be after start date");
+      }
+      return true;
+    }),
+
+  body("priority")
+    .optional({ checkFalsy: true })
+    .customSanitizer((v) => v.toLowerCase())
+    .isIn(["low", "medium", "high"])
+    .withMessage("Priority is invalid"),
+];
+
 
 const notesValidator = () => {
   return [body("content").notEmpty().withMessage("Content is required")];
