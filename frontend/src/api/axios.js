@@ -2,7 +2,7 @@ import { notifications } from "@mantine/notifications";
 import axios from "axios";
 import { StorageKeys } from "../utils/constants";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8001/api/v1";
+const API_URL = import.meta.env.VITE_API_URL || "https://planora-1-3162.onrender.com/api/v1";
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
