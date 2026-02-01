@@ -38,7 +38,7 @@ const createTask = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Project not found");
   }
 
-  const baseUrl = process.env.SERVER_URL || "http://localhost:8000";
+  const baseUrl = process.env.SERVER_URL || "https://planora-1-3162.onrender.com";
   // Ensure req.files is an array or empty array if undefined
   const files = req.files || [];
 

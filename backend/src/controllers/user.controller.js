@@ -8,7 +8,7 @@ export const uploadProfilePhoto = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Profile image is required");
   }
 
-  const baseUrl = process.env.SERVER_URL || "http://localhost:8000";
+  const baseUrl = process.env.SERVER_URL || "https://planora-1-3162.onrender.com";
 
   const avatar = {
     url: `${baseUrl}/images/${req.file.filename}`,
