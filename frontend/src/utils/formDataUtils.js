@@ -22,8 +22,9 @@ export const createTaskFormData = (taskData, attachments = []) => {
         taskData[key]._id
       ) {
         formData.append(key, taskData[key]._id);
-      }else if(taskData[key] instanceof Date) {
-        formData.append(key, taskData[key].toISOString());
+      // }else if(taskData[key] instanceof Date) {
+      } else if (key === "startDate" || key === "endDate") {
+        formData.append(key, taskData[key] ? new Date(taskData[key]).toISOString() : "");
       }
        else {
         formData.append(key, taskData[key]);

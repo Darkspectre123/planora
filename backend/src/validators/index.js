@@ -141,10 +141,16 @@ const createTaskValidator = () => [
 
   body("description").optional(),
 
+  // body("assignedTo")
+  //   .optional({ nullable: true })
+  //   .isMongoId()
+  //   .withMessage("Assigned user is invalid"),
+
   body("assignedTo")
-    .optional({ nullable: true })
-    .isMongoId()
-    .withMessage("Assigned user is invalid"),
+  .optional({ checkFalsy: true }) // allow "" to skip validation
+  .isMongoId()
+  .withMessage("Assigned user is invalid"),
+
 
   body("status")
     .optional()
