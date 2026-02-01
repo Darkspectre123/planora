@@ -7,7 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL || "https://planora-1-3162.onrender
 const axiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true, // Important for cookies
-  timeout: 10000,
+  timeout: 60000,
 });
 
 // Request interceptor for adding auth token
