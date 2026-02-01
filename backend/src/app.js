@@ -3,7 +3,7 @@ import cors from "cors";
 import express from "express";
 import path from "path";
 import "./cron/taskReminder.cron.js";
-import "./cron/projectReminder.js";
+import "./cron/projectreminder.js";
 
 const app = express();
 app.use(express.json({ limit: "16kb" }));
